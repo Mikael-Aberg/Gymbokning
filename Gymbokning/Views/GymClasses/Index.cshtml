@@ -1,0 +1,87 @@
+﻿@model Gymbokning.Models.IndexGymClassesViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+<form id="historyForm" method="get">
+    <label for="showHistory">Show History</label>
+    <input type="checkbox" name="showHistory" id="showHistory" @Model.Checked />
+</form>
+
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.GymClasses.First().GymClass.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GymClasses.First().GymClass.StartTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GymClasses.First().GymClass.Duration)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GymClasses.First().GymClass.EndTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GymClasses.First().GymClass.Description)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.GymClasses)
+    {
+        <tr class="oldClass">
+            <td>
+                @Html.DisplayFor(modelItem => item.GymClass.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GymClass.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GymClass.Duration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GymClass.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GymClass.Description)
+            </td>
+            <td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.GymClass.Id }) <span> | </span>
+                            @Html.ActionLink("Delete", "Delete", new { id = item.GymClass.Id }) <span> | </span>
+                    }
+
+                    if (!item.IsOldClass)
+                    {
+                        if (item.Attended)
+                        {
+                            @Html.ActionLink("Boka av", "BookingToggle", new { id = item.GymClass.Id, showHistory = Model.Checked }) <span> | </span>
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Boka", "BookingToggle", new { id = item.GymClass.Id, showHistory = Model.Checked }) <span> | </span>
+                        }
+                    }
+                }
+                @Html.ActionLink("Details", "Details", new { id = item.GymClass.Id })
+
+            </td>
+        </tr>
+    }
+</table>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/ShowHistory.js"></script>
